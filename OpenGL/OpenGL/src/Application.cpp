@@ -32,7 +32,7 @@ int main(void)
 	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(1200, 600, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -52,10 +52,10 @@ int main(void)
 
 	{
 		float positions[] = {
-		-0.5f,	-0.5f,	0.0f, 0.0f,
-		 0.5f,	-0.5f,	1.0f, 0.0f,
-		 0.5f,	 0.5f,	1.0f, 1.0f,
-		 -0.5f,  0.5f,	0.0f, 1.0f
+		 100.f,	100.f,	0.0f, 0.0f,
+		 200.f, 100.f,	1.0f, 0.0f,
+		 200.f, 200.f,	1.0f, 1.0f,
+		 100.f, 200.f,  0.0f, 1.0f
 		};
 		unsigned int indices[] =
 		{
@@ -68,19 +68,22 @@ int main(void)
 
 		VertexArray va;
 		VertexBuffer vb(positions, 4 * 4 * sizeof(float));
-		
+
 		VertexBufferLayout layout;
 		layout.Push<float>(2);
 		layout.Push<float>(2);
 		va.AddBuffer(vb, layout);
-		
+
 		IndexBuffer ib(indices, 6);
 
-		glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+		glm::vec4 vp(100.f, 100.f, 0.f, 1.f);
+		glm::vec4 result = proj * vp;
 
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind();
 		shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+		shader.SetUniform4f("u_PositionOffset", 0.3f, 0.0f, 0.0f, 0.0f);
 		shader.SetUniformMat4f("u_MVP", proj);
 
 
@@ -97,6 +100,8 @@ int main(void)
 		Renderer renderer;
 
 		float r = 0.0f;
+		float x = 0.0f;
+		float xincr = 0.01f;
 		float increment = 0.05f;
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
@@ -106,8 +111,17 @@ int main(void)
 
 			shader.Bind();
 			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+			shader.SetUniform4f("u_PositionOffset", x, 0.0f, 0.0f, 0.0f);
 			renderer.Draw(va, ib, shader);
 
+			if (x > 1.0f)
+			{
+				xincr = -0.01f;
+			}
+			else if (x < 0.0f)
+			{
+				xincr = 0.01f;
+			}
 			if (r > 1.0f)
 			{
 				increment = -0.05f;
@@ -117,6 +131,7 @@ int main(void)
 				increment = 0.05f;
 			}
 			r += increment;
+			x += xincr;
 
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);
