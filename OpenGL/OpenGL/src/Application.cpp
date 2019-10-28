@@ -17,6 +17,9 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
+
 
 
 int main(void)
@@ -52,10 +55,10 @@ int main(void)
 
 	{
 		float positions[] = {
-		 100.f,	100.f,	0.0f, 0.0f,
-		 200.f, 100.f,	1.0f, 0.0f,
+		 000.f,	000.f,	0.0f, 0.0f,
+		 200.f, 000.f,	1.0f, 0.0f,
 		 200.f, 200.f,	1.0f, 1.0f,
-		 100.f, 200.f,  0.0f, 1.0f
+		 000.f, 200.f,  0.0f, 1.0f
 		};
 		unsigned int indices[] =
 		{
@@ -77,14 +80,14 @@ int main(void)
 		IndexBuffer ib(indices, 6);
 
 		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-		glm::vec4 vp(100.f, 100.f, 0.f, 1.f);
-		glm::vec4 result = proj * vp;
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+
 
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind();
 		shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 		shader.SetUniform4f("u_PositionOffset", 0.3f, 0.0f, 0.0f, 0.0f);
-		shader.SetUniformMat4f("u_MVP", proj);
+
 
 
 		Texture texture("res/textures/mild_panic.png");
@@ -99,19 +102,43 @@ int main(void)
 
 		Renderer renderer;
 
+		ImGui::CreateContext();
+		ImGui_ImplGlfwGL3_Init(window, true);
+		ImGui::StyleColorsDark();
+		
+
+
 		float r = 0.0f;
 		float x = 0.0f;
-		float xincr = 0.01f;
+		float xincr = 0;
 		float increment = 0.05f;
+
+		//imgui
+		bool show_demo_window = true;
+		bool show_another_window = false;
+		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+		glm::vec3 translation(100, 200, 0);
+
+
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
 			/* Render here */
 			renderer.Clear();
 
+			//imgui
+			ImGui_ImplGlfwGL3_NewFrame();
+			
+
 			shader.Bind();
+
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+			glm::mat4 mvp = proj * view * model;
+
 			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 			shader.SetUniform4f("u_PositionOffset", x, 0.0f, 0.0f, 0.0f);
+			shader.SetUniformMat4f("u_MVP", mvp);
 			renderer.Draw(va, ib, shader);
 
 			if (x > 1.0f)
@@ -133,6 +160,13 @@ int main(void)
 			r += increment;
 			x += xincr;
 
+			{
+				ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
+				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			}
+			ImGui::Render();
+			ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);
 
@@ -142,6 +176,9 @@ int main(void)
 
 		//GLCall(glDeleteProgram(shader));
 	}
+
+	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui::DestroyContext();
 	glfwTerminate();
 	return 0;
 }
