@@ -2,12 +2,8 @@
 #include "Renderer.h"
 #include "imgui/imgui.h"
 
-
-
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-
 
 namespace test
 {
@@ -32,18 +28,20 @@ namespace test
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		m_VAO = std::make_unique<VertexArray>();
+
 		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
 		VertexBufferLayout layout;
 		layout.Push<float>(2);
 		layout.Push<float>(2);
-
 		m_VAO->AddBuffer(*m_VertexBuffer, layout);
+
 		m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 6);
 				
 		m_Shader = std::make_unique<Shader>("res/shaders/Basic.shader");
 		m_Shader->Bind();
 		m_Shader->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 		m_Shader->SetUniform4f("u_PositionOffset", 0.3f, 0.0f, 0.0f, 0.0f);
+
 		m_Texture = std::make_unique<Texture>("res/textures/mild_panic.png");
 		m_Shader->SetUniform1i("u_Texture", 0);
 
@@ -51,14 +49,10 @@ namespace test
 	}
 
 	TestTexture2D::~TestTexture2D()
-	{
-
-	}
+	{	}
 
 	void TestTexture2D::OnUpdate(float deltaTime)
-	{
-
-	}
+	{	}
 
 	void TestTexture2D::OnRender()
 	{
@@ -68,10 +62,6 @@ namespace test
 		Renderer renderer;
 
 		m_Texture->Bind();
-
-		
-
-
 
 		{
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationA);
