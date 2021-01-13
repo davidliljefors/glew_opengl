@@ -6,7 +6,7 @@ void GLClearError()
 	while (glGetError() != GL_NO_ERROR);
 }
 
-bool GLLogCall(const char* function, const char* file, int line)
+bool GLLogCall(char const* function, char const* file, int line)
 {
 
 	while (GLenum error = glGetError())
@@ -23,7 +23,7 @@ void Renderer::Clear() const
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const
+void Renderer::Draw(VertexArray const& va, IndexBuffer const& ib, Shader const& shader) const
 {
 	//shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 	shader.Bind();

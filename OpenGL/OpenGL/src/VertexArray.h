@@ -12,7 +12,7 @@ public:
 	VertexArray();
 	~VertexArray();
 
-	void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
+	void AddBuffer(VertexBuffer const& vb, VertexBufferLayout const& layout);
 
 	void Bind() const;
 	void Unbind() const;

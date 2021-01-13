@@ -11,12 +11,12 @@
 
 
 void GLClearError();
-bool GLLogCall(const char* function, const char* file, int line);
+bool GLLogCall(char const* function, char const* file, int line);
 
 class Renderer
 {
 public:
 	void Clear() const;
-	void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+	void Draw(VertexArray const& va, IndexBuffer const& ib, Shader const& shader) const;
 
 };

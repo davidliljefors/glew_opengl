@@ -22,6 +22,7 @@
 
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
+#include "tests/Test3DModel.h"
 
 
 
@@ -33,12 +34,14 @@ int main(void)
 	if (!glfwInit())
 		return -1;
 
+	glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(1600, 900, "OpenGL-Sandbox", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -74,6 +77,7 @@ int main(void)
 
 		testMenu->RegisterTest<test::TestClearColor>("Clear Color");
 		testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
+		testMenu->RegisterTest<test::Test3DModel>("3D Model");
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
